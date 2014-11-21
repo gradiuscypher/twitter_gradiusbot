@@ -80,10 +80,11 @@ class GradiusBot():
 
         for m in mentions:
             m_lower = m.text.lower()
-            message_text = m_lower.replace('@'+self.name, '').strip()
+            message_text = m_lower.replace('@'+self.name, '').strip().split()
 
             # Owner only functions
             if m.author.name.lower() == self.owner:
-                if message_text == '!progress':
+                print message_text
+                if message_text[0] == '!progress':
                     reply = road_to_10k(self.get_tweets_in_period(86400), m.author)
-                    self.api.update_status(reply, in_reply_to_status=m.id)
+                    self.api.update_status(reply, m.id)
