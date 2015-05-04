@@ -1,6 +1,8 @@
 import tweepy
 import datetime
-from ConfigParser import RawConfigParser
+import time
+import internetmademe.markov
+from configparser import RawConfigParser
 from mention_processing import road_to_10k
 
 
@@ -48,6 +50,43 @@ class GradiusBot():
 
         return result_list
 
+    def markov_tweet_loop(self):
+        while True:
+            print("Generating tweet...")
+            m = internetmademe.markov.Markov()
+            tweet = m.generate_sentence(2, "*", 5, 15)
+            print("Candidate tweet:", tweet)
+
+            while len(tweet) > 140:
+                print("Tweet was too long, generating a new tweet...")
+                tweet = m.generate_sentence(2, "*", 5, 15)
+                print("Candidate tweet:", tweet)
+
+            print("Updating status...")
+            self.api.update_status(status=tweet)
+            print("Sleeping for 600s...")
+            time.sleep(300)
+            print("Sleeping for 300s...")
+            time.sleep(150)
+            print("Sleeping for 150s...")
+            time.sleep(90)
+            print("Sleeping for 60s...")
+            time.sleep(60)
+
+    def process_mentions(self, max_age):
+        mentions = self.recent_mentions(max_age)
+
+        for m in mentions:
+            m_lower = m.text.lower()
+            message_text = m_lower.replace('@'+self.name, '').strip().split()
+
+            # Owner only functions
+            if m.author.name.lower() == self.owner:
+                print(message_text)
+                if message_text[0] == '!progress':
+                    reply = road_to_10k(self.get_tweets_in_period(86400), m.author)
+                    self.api.update_status(reply, m.id)
+
     def recent_mentions(self, max_age):
         now = datetime.datetime.utcnow()
         result_list = []
@@ -75,16 +114,3 @@ class GradiusBot():
 
         return result_list
 
-    def process_mentions(self, max_age):
-        mentions = self.recent_mentions(max_age)
-
-        for m in mentions:
-            m_lower = m.text.lower()
-            message_text = m_lower.replace('@'+self.name, '').strip().split()
-
-            # Owner only functions
-            if m.author.name.lower() == self.owner:
-                print message_text
-                if message_text[0] == '!progress':
-                    reply = road_to_10k(self.get_tweets_in_period(86400), m.author)
-                    self.api.update_status(reply, m.id)

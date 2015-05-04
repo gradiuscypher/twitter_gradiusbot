@@ -1,6 +1,8 @@
 #Gradius stuff
 *.cfg
 .idea/*
+venv/
+internetmademe/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
