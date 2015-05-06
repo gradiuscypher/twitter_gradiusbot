@@ -1,4 +1,5 @@
 import tweepy
+import random
 import datetime
 import time
 import internetmademe.markov
@@ -52,14 +53,15 @@ class GradiusBot():
 
     def markov_tweet_loop(self):
         while True:
+            chain = random.randint(2, 3)
             print("Generating tweet...")
             m = internetmademe.markov.Markov()
-            tweet = m.generate_sentence(2, "*", 5, 15)
+            tweet = m.generate_sentence(chain, "*", 5, 20)
             print("Candidate tweet:", tweet)
 
             while len(tweet) > 140:
                 print("Tweet was too long, generating a new tweet...")
-                tweet = m.generate_sentence(2, "*", 5, 15)
+                tweet = m.generate_sentence(chain, "*", 5, 20)
                 print("Candidate tweet:", tweet)
 
             print("Updating status...")
