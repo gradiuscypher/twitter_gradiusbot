@@ -84,7 +84,7 @@ class GradiusBot():
 
         print("Updating status...")
         print("Candidate tweet:", fortune_message + tweet)
-        self.api.update_status(status=tweet)
+        self.api.update_status(status=fortune_message + tweet)
 
     def get_tweets_in_period(self, seconds):
         now = datetime.datetime.utcnow()
