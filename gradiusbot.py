@@ -47,7 +47,6 @@ class GradiusBot():
         for transaction in transaction_list['data']['txs']:
             if float(transaction['time']) > float(last_time):
                 for amounts in transaction['amounts_received']:
-                    print("in for amounts")
                     balance += float(amounts['amount'])
 
             if transaction['time'] > temp_time:
