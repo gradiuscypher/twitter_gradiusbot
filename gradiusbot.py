@@ -183,6 +183,7 @@ class GradiusBot():
             while current_balance >= fortune_cost:
                 current_balance -= fortune_cost
                 print("Triggered fortune tweet. Remaining balance:", current_balance)
+                self.fortune_tweet()
 
             self.useful_data.set('Data', 'balance_remainder', current_balance)
             print("keeping remaining balance", current_balance)
