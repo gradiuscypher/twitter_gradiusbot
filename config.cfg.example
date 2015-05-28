@@ -4,6 +4,11 @@ consumer_secret =
 access_token =
 access_token_secret =
 
+[BlockIO]
+key =
+pin =
+addr =
+
 [Config]
 target =
 owner =
