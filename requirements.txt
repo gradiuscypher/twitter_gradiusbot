@@ -1,7 +1,11 @@
+base58==0.2.2
+block-io==1.1.6
+ecdsa==0.13
 elasticsearch==1.4.0
 ipython==3.1.0
 oauthlib==0.7.2
 praw==2.1.21
+pycrypto==2.6.1
 requests==2.6.2
 requests-oauthlib==0.5.0
 six==1.9.0
