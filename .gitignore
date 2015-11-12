@@ -1,7 +1,7 @@
 #Gradius stuff
 *.cfg
 .idea/*
-venv/
+venv3/
 internetmademe/
 
 # Byte-compiled / optimized / DLL files

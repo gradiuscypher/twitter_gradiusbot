@@ -2,7 +2,6 @@ import tweepy
 import random
 import datetime
 import time
-from block_io import BlockIo
 import internetmademe.markov
 from configparser import RawConfigParser
 from mention_processing import road_to_10k
@@ -25,40 +24,10 @@ class GradiusBot():
         auth.set_access_token(access_token, access_token_secret)
         self.api = tweepy.API(auth)
 
-        #Setup Dogecoin
-        blockio_key = config.get('BlockIO', 'key')
-        blockio_pin = config.get('BlockIO', 'pin')
-        self.blockio_addr = config.get('BlockIO', 'addr')
-        self.blockio = BlockIo(blockio_key, blockio_pin)
-
         #Setup Config
         self.target = config.get('Config', 'target')
         self.owner = config.get('Config', 'owner')
         self.name = self.api.me().name.lower()
-
-    def balance_since_last_tweet(self):
-        self.useful_data.read('data.cfg')
-        last_time = self.useful_data.get('Data', 'time_since_last_balance')
-        balance = 0.0
-        temp_time = 0
-
-        transaction_list = self.blockio.get_transactions(type='received', addresses=self.blockio_addr)
-
-        for transaction in transaction_list['data']['txs']:
-            if float(transaction['time']) > float(last_time):
-                for amounts in transaction['amounts_received']:
-                    balance += float(amounts['amount'])
-
-            if transaction['time'] > temp_time:
-                temp_time = transaction['time']
-
-        self.useful_data.set('Data', 'time_since_last_balance', temp_time)
-        print("setting time", temp_time)
-        datafile = open('data.cfg', 'w')
-        self.useful_data.write(datafile)
-        datafile.close()
-
-        return balance
 
     def fortune_tweet(self):
         m = internetmademe.markov.Markov()
@@ -75,7 +44,7 @@ class GradiusBot():
 
         tweet = m.generate_sentence(chain, starter, 5, 15)
 
-        fortune_message = "I've gotten enough Doge for a fortune!\n"
+        fortune_message = "A wise gradiusbot once said:\n"
 
         while len(tweet) > 100:
             print("Tweet was too long, generating a new tweet...")
@@ -165,29 +134,13 @@ class GradiusBot():
 
         return result_list
 
-    def run_full_loop(self, talk_chance_percent, sleep_time, fortune_cost=100):
+    def run_full_loop(self, talk_chance_percent, sleep_time):
         while True:
-            self.useful_data.read('data.cfg')
-            remaining_balance = self.useful_data.get('Data', 'balance_remainder')
-            current_balance = self.balance_since_last_tweet() + float(remaining_balance)
-
             is_talking = random.randint(0, 100)
 
             #Try to talk with something random
             if talk_chance_percent > is_talking:
                 print("Triggered talk chance:", talk_chance_percent, ">", is_talking)
                 self.markov_tweet()
-
-            #See if you've gotten enough Doge for a fortune
-            while current_balance >= fortune_cost:
-                current_balance -= fortune_cost
-                print("Triggered fortune tweet. Remaining balance:", current_balance)
-                self.fortune_tweet()
-
-            self.useful_data.set('Data', 'balance_remainder', current_balance)
-            print("keeping remaining balance", current_balance)
-            datafile = open('data.cfg', 'w')
-            self.useful_data.write(datafile)
-            datafile.close()
 
             time.sleep(sleep_time)
