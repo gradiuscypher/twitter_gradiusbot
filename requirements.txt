@@ -1,7 +1,7 @@
 base58==0.2.2
 block-io==1.1.6
 decorator==4.0.4
-ecdsa==0.13
+ecdsa==0.13.3
 elasticsearch==2.1.0
 ipython==4.0.0
 ipython-genutils==0.1.0
